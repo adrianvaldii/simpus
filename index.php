@@ -50,10 +50,10 @@
           <hr>
           <div class="row">
             <div class="col-md-8">
-              <div class="kotak table-pasien">
+              <div class="kotak table-scroll">
                 <h4>DATA PASIEN BARU</h4>
                 <hr>
-                <table class="table table-striped">
+                <table class="table table-striped table-pasien">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -84,7 +84,15 @@
                           <td><?php echo $row['ID_PASIEN']; ?></td>
                           <td><?php echo $row['NAMA_PASIEN']; ?></td>
                           <td><?php echo $row['NAMA_ORTU']; ?></td>
-                          <td><?php echo $row['JENIS_KELAMIN']; ?></td>
+                          <td>
+                            <?php
+                              if($row['JENIS_KELAMIN'] == "L"){
+                                echo "Laki-laki";
+                              }elseif ($row['JENIS_KELAMIN'] == "P") {
+                                echo "Perempuan";
+                              }
+                            ?>
+                          </td>
                           <td><?php echo $row['TEMPAT_LAHIR']; ?></td>
                           <td><?php echo date("d F Y", strtotime($row['TGL_LAHIR'])) ?></td>
                           <td><?php echo $row['UMUR']; ?></td>
@@ -100,10 +108,41 @@
                   </tbody>
                 </table>
               </div>
-              <div class="kotak">
+              <div class="kotak table-scroll">
                 <h4>STATISTIK PENGOBATAN</h4>
                 <hr>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <table class="table table-striped table-daftar">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>No. Rekam Medis</th>
+                      <th>ID Pasien</th>
+                      <th>Nama Pasien</th>
+                      <th>Pelayanan</th>
+                      <th>Dokter</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php
+                      $data_daftar = "select rekam_medis.id_rekam_medis, rekam_medis.id_pasien, pasien.nama_pasien, rekam_medis.id_pelayanan, pelayanan.nama_pelayanan, rekam_medis.id_dokter, dokter.nama_dokter from rekam_medis join pasien on rekam_medis.id_pasien=pasien.id_pasien join pelayanan on rekam_medis.id_pelayanan=pelayanan.id_pelayanan join dokter on rekam_medis.id_dokter=dokter.id_dokter";
+                      $parse_daftar = oci_parse($conn_lokal, $data_daftar);
+                      oci_execute($parse_daftar);
+                      $id = 1;
+                      while (($row_daftar = oci_fetch_array($parse_daftar, OCI_BOTH)) != false) {
+                        ?>
+                        <tr>
+                          <td><?php echo $id++; ?></td>
+                          <td><?php echo $row_daftar['ID_REKAM_MEDIS']; ?></td>
+                          <td><?php echo $row_daftar['ID_PASIEN']; ?></td>
+                          <td><?php echo $row_daftar['NAMA_PASIEN']; ?></td>
+                          <td><?php echo $row_daftar['NAMA_PELAYANAN']; ?></td>
+                          <td><?php echo $row_daftar['NAMA_DOKTER']; ?></td>
+                        </tr>
+                        <?php
+                      }
+                    ?>
+                  </tbody>
+                </table>
               </div>
             </div>
             <div class="col-md-4">
