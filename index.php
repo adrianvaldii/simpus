@@ -7,23 +7,23 @@
   $status = 0;
 
   // connect Logic
-  if(!empty($_POST)){
-    $query = "SELECT username, password from users where username = '$_POST[username]'";
-    $query_parse = oci_parse($conn_lokal, $query);
-    oci_execute($query_parse);
-    $login_ok = false;
-    $count = OCIRowCount($query_parse);
-    $row = oci_fetch_assoc($query_parse);
+  if(isset($_POST['submit'])){
+    // $query = "SELECT username, password from users where username = '$_POST[username]'";
+    // $query_parse = oci_parse($conn_lokal, $query);
+    // oci_execute($query_parse);
+    // $login_ok = false;
+    // $count = OCIRowCount($query_parse);
+    // $row = oci_fetch_assoc($query_parse);
 
     // print_r($row['PASSWORD']);die();
 
-    if($count){
-      $_SESSION['user'] = $row;
-      header("Location: pages/");
-      die("Redirecting to: pages/");
-    }
-  }else{
-    echo "kosong bro";
+    // if($count){
+    //   $_SESSION['user'] = $row;
+    //   header("Location: dashboard.php");
+    //   die("Redirecting to: dashboard.php");
+    // }
+      header("Location: dashboard.php");
+      die("Redirecting to: dashboard.php");
   }
 ?>
 <!DOCTYPE html>
@@ -48,7 +48,7 @@
         <form action="index.php" method="POST" autocomplete="off">
           <input type="text" name="username" value="" placeholder="Username">
           <input type="password" name="password" value="" placeholder="Password">
-          <input type="submit" name="Submit" value="Login">
+          <input type="submit" name="submit" value="Login">
         </form>
         <span class="garis"></span>
         <p id="legal">Copyright &copy; 2016 by Valdi Adrian Abrar</p>
