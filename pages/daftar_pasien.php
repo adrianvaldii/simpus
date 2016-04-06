@@ -1,6 +1,6 @@
 <?php
 
-  include 'koneksi/koneksi_lokal.php';
+  include '../koneksi/koneksi_lokal.php';
 
   // generate id pasien
 
@@ -72,7 +72,7 @@
     <title>Poli Klinik UIN Sunan Kalijaga</title>
 
     <!-- css -->
-    <?php include 'css.php'; ?>
+    <?php include '../css.php'; ?>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-poli">
@@ -91,7 +91,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <?php
-            include "nav-top.php";
+            include "../nav-top.php";
           ?>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
@@ -100,7 +100,7 @@
     <div class="container-fluid isi">
       <div class="row">
         <?php
-          include 'nav-side.php';
+          include '../nav-side.php';
         ?>
         <div class="col-md-10 content">
           <h3>PENDAFTARAN</h3>
@@ -194,6 +194,6 @@
     </div>
 
     <!-- js -->
-    <?php include 'js.php'; ?>
+    <?php include '../js.php'; ?>
   </body>
 </html>

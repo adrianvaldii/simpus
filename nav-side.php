@@ -5,8 +5,8 @@
         <li><a href="index.php"><span class="glyphicon glyphicon-home"></span> Dashboard</a></li>
       </ul>
     </li>
-    <li><a href="#" id="btn-1" data-toggle="collapse" data-target="#transaksi" aria-expanded="false">TRANSAKSI</a>
-      <ul class="collapse" id="transaksi" role="menu" aria-labelledby="btn-1">
+    <li><a href="#">TRANSAKSI</a>
+      <ul>
         <li><a href="daftar_lama.php"><span class="glyphicon glyphicon-th-large"></span> Pendaftaran</a></li>
         <li><a href="#"><span class="glyphicon glyphicon-th-large"></span> Rekam Medis</a></li>
         <hr>
