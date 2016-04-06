@@ -1,9 +1,14 @@
-<?php
+<?php session_start();
   // error_reporting(0);
 
   include 'koneksi/koneksi_pusat.php';
   include 'koneksi/koneksi_lokal.php';
 
+  if(empty($_SESSION['user'])){
+    header("Location: index.php?message=please+login");
+
+    die("Redirecting to: index.php");
+  }
 ?>
 
 <!DOCTYPE html>
