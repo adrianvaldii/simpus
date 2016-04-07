@@ -1,16 +1,19 @@
 <?php
 
-  include '../koneksi/koneksi_lokal.php';
+  include 'koneksi/koneksi_lokal.php';
+  include 'koneksi/koneksi_pusat.php';
 
   // generate id pasien
-
   $carikode = "SELECT max(id_pasien) as id_pasien from pasien";
   $datakode = oci_parse($conn_lokal, $carikode);
   oci_execute($datakode);
-
   $row = oci_fetch_array($datakode);
 
-  $id_pasien = $row[0]+1;
+  if($row){
+    $id_pasien = $row[0] + 1;
+  }else{
+    $id_pasien = "900001";
+  }
 
   $status = "";
 
@@ -27,6 +30,7 @@
     $telp = $_POST['telp'];
     $gol_darah = $_POST['gol_darah'];
 
+    // input to local server
     $query = oci_parse($conn_lokal, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
     oci_bind_by_name($query, ":id_pasien", $id_pasien);
     oci_bind_by_name($query, ":nama_pasien", $nama_pasien);
@@ -41,15 +45,37 @@
     oci_bind_by_name($query, ":telp", $telp);
     oci_bind_by_name($query, ":gol_darah", $gol_darah);
 
-    oci_execute($query);
+    $result_lokal = oci_execute($query);
     oci_commit($conn_lokal);
-    $result = oci_free_statement($query);
-    if ($result) {
+
+    oci_close($conn_lokal);
+
+    // input to main server
+    $query_pusat = oci_parse($conn_pusat, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
+    oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+    oci_bind_by_name($query_pusat, ":nama_pasien", $nama_pasien);
+    oci_bind_by_name($query_pusat, ":nama_ortu", $nama_ortu);
+    oci_bind_by_name($query_pusat, ":jenis_kelamin", $jenis_kelamin);
+    oci_bind_by_name($query_pusat, ":tempat_lahir", $tempat_lahir);
+    oci_bind_by_name($query_pusat, ":tgl_lahir" , $tgl_lahir);
+    oci_bind_by_name($query_pusat, ":umur", $umur);
+    oci_bind_by_name($query_pusat, ":alamat_asal", $alamat_asal);
+    oci_bind_by_name($query_pusat, ":alamat_domisili", $alamat_domisili);
+    oci_bind_by_name($query_pusat, ":pekerjaan", $pekerjaan);
+    oci_bind_by_name($query_pusat, ":telp", $telp);
+    oci_bind_by_name($query_pusat, ":gol_darah", $gol_darah);
+
+    $result_pusat = oci_execute($query_pusat);
+    oci_commit($conn_pusat);
+
+    oci_close($conn_pusat);
+
+    if ($result_lokal && $result_pusat) {
       $status = "berhasil";
     }else{
       $status = "gagal";
     }
-    oci_close($conn_lokal);
+
   }
 
 ?>
@@ -62,7 +88,7 @@
     <title>Poli Klinik UIN Sunan Kalijaga</title>
 
     <!-- css -->
-    <?php include '../css.php'; ?>
+    <?php include 'css.php'; ?>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-poli">
@@ -81,7 +107,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <?php
-            include "../nav-top.php";
+            include "nav-top.php";
           ?>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
@@ -90,7 +116,7 @@
     <div class="container-fluid isi">
       <div class="row">
         <?php
-          include '../nav-side.php';
+          include 'nav-side.php';
         ?>
         <div class="col-md-10 content">
           <h3>PENDAFTARAN</h3>
@@ -118,7 +144,7 @@
                     <?php
                   }
                 ?>
-                <form action="daftar_pasien.php" method="post">
+                <form action="daftar_pasien.php" method="post" autocomplete="off">
                   <div class="form-group">
                     <label>ID Pasien</label>
                     <input type="text" name="id_daftar" class="form-control" readonly="true" value="<?php echo $id_pasien; ?>">
@@ -184,6 +210,6 @@
     </div>
 
     <!-- js -->
-    <?php include '../js.php'; ?>
+    <?php include 'js.php'; ?>
   </body>
 </html>
