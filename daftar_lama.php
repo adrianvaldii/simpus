@@ -1,10 +1,11 @@
 <?php
-  include '../koneksi/koneksi_lokal.php';
+  include 'koneksi/koneksi_lokal.php';
+  include 'koneksi/koneksi_pusat.php';
   // timezone
   date_default_timezone_set('Asia/Jakarta');
 
   // generate id daftar berobat
-  $caridata = "SELECT max(id_rekam_medis) as id_rekam_medis from rekam_medis";
+  $caridata = "SELECT max(id_daftar) as id_rekam_medis from rekam_medis";
   $datakode = oci_parse($conn_lokal, $caridata);
   oci_execute($datakode);
   $cari = oci_fetch_array($datakode, OCI_BOTH);
@@ -21,26 +22,41 @@
 
   if(isset($_POST['submit'])){
     $id_daftar = $_POST['id_daftar'];
+    $tgl_daftar = $_POST['tgl_daftar'];
     $id_pasien = $_POST['id_pasien'];
     $daftar_pelayanan = $_POST['daftar_pelayanan'];
-    $daftar_dokter = $_POST['daftar_dokter'];
+    $daftar_perawat = $_POST['daftar_perawat'];
 
-    $query = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_rekam_medis, id_pasien, id_pelayanan, id_dokter) VALUES (:id_rekam_medis, :id_pasien, :id_pelayanan, :id_dokter)");
-    oci_bind_by_name($query, ":id_rekam_medis", $id_daftar);
-    oci_bind_by_name($query, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query, ":id_dokter" , $daftar_dokter);
+    // input to database pasien
+    $query_pasien = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+    oci_bind_by_name($query_pasien, ":id_daftar", $id_daftar);
+    oci_bind_by_name($query_pasien, ":tgl_daftar", $tgl_daftar);
+    oci_bind_by_name($query_pasien, ":id_pasien", $id_pasien);
+    oci_bind_by_name($query_pasien, ":id_pelayanan", $daftar_pelayanan);
+    oci_bind_by_name($query_pasien, ":id_perawat" , $daftar_perawat);
 
-    oci_execute($query);
+    $result_pasien = oci_execute($query_pasien);
     oci_commit($conn_lokal);
-    $result = oci_free_statement($query);
-    // print_r($result);die();
-    if ($result) {
+
+    oci_close($conn_lokal);
+
+    // input to database pusat
+    $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+    oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
+    oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
+    oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+    oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
+    oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
+
+    $result_pusat = oci_execute($query_pusat);
+    oci_commit($conn_pusat);
+
+    if ($result_pasien && $result_pusat) {
       $status = "berhasil";
     }else{
       $status = "gagal";
     }
-    // oci_close($conn_lokal);
+    oci_close($conn_pusat);
   }
 
 ?>
@@ -54,7 +70,7 @@
     <title>Poli Klinik UIN Sunan Kalijaga</title>
 
     <!-- css -->
-    <?php include '../css.php'; ?>
+    <?php include 'css.php'; ?>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-poli">
@@ -73,7 +89,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <?php
-            include "../nav-top.php";
+            include "nav-top.php";
           ?>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
@@ -82,7 +98,7 @@
     <div class="container-fluid isi">
       <div class="row">
         <?php
-          include '../nav-side.php';
+          include 'nav-side.php';
         ?>
         <div class="col-md-10 content main_baru">
           <h3>PENDAFTARAN</h3>
@@ -123,6 +139,10 @@
                     <div class="form-group">
                       <label>ID Pasien</label>
                       <input type="text" name="id_pasien" id="id_pasien" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label>Tanggal Daftar</label>
+                      <input type="date" name="tgl_daftar" class="form-control" readonly="true" value="<?php echo date("Y-m-d"); ?>">
                     </div>
                     <div class="form-group">
                       <label>Nama Pasien</label>
@@ -190,16 +210,16 @@
                   <!-- form dokter -->
                   <div class="kotak">
                     <div class="form-group">
-                      <label>Daftar Dokter</label>
-                      <select class="form-control" name="daftar_dokter">
-                        <option>-- Pilih Dokter --</option>
+                      <label>Daftar Perawat</label>
+                      <select class="form-control" name="daftar_perawat">
+                        <option>-- Pilih Perawat --</option>
                         <?php
-                          $data_dokter = "SELECT * FROM dokter";
-                          $dokter = oci_parse($conn_lokal, $data_dokter);
-                          oci_execute($dokter);
+                          $data_perawat = "SELECT * FROM perawat";
+                          $perawat = oci_parse($conn_lokal, $data_perawat);
+                          oci_execute($perawat);
 
-                          while (($row = oci_fetch_array($dokter, OCI_BOTH)) != false) {
-                            ?><option value="<?php echo $row['ID_DOKTER']; ?>"><?php echo $row['NAMA_DOKTER'] . " - " . $row['SPESIALIS']; ?></option> <?php
+                          while (($row = oci_fetch_array($perawat, OCI_BOTH)) != false) {
+                            ?><option value="<?php echo $row['ID_PERAWAT']; ?>"><?php echo $row['NAMA_PERAWAT']; ?></option> <?php
                           }
                         ?>
                       </select>
@@ -224,7 +244,7 @@
 
     <!-- js -->
     <?php
-      include '../js.php';
+      include 'js.php';
     ?>
 
     <script type="text/javascript">

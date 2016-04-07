@@ -12,16 +12,6 @@
 
   $id_pasien = $row[0]+1;
 
-  // $data = "SELECT * FROM pasien";
-  // $data_parse = oci_parse($conn_lokal, $data);
-  // oci_execute($data_parse);
-  //
-  // while (($row = oci_fetch_array($data_parse, OCI_BOTH)) != false) {
-  //   // Use the uppercase column names for the associative array indices
-  //   echo $row['ID_PASIEN'];
-  //   echo $row['NAMA_PASIEN'];
-  // }
-
   $status = "";
 
   if(isset($_POST['submit'])){
