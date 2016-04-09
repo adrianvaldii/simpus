@@ -119,7 +119,7 @@
           include 'nav-side.php';
         ?>
         <div class="col-md-10 content">
-          <h3>PENDAFTARAN</h3>
+          <h3>PENDAFTARAN - PASIEN BARU</h3>
           <hr>
           <div class="row">
             <div class="col-md-12">
@@ -152,10 +152,12 @@
                   <div class="form-group">
                     <label>Nama Pasien</label>
                     <input type="text" name="nama_pasien" class="form-control">
+                    <small class="detail-form">Nama lengkap pasien. Harus diisi.</small>
                   </div>
                   <div class="form-group">
                     <label>Nama Orang Tua/Wali</label>
                     <input type="text" name="nama_ortu" class="form-control">
+                    <small class="detail-form">Nama orang tua/wali pasien. Jika tidak ada isikan 'Tidak Ada'.</small>
                   </div>
                   <div class="form-group">
                     <label>Jenis Kelamin</label>
@@ -164,31 +166,39 @@
                       <option value="L">Laki-laki</option>
                       <option value="P">Perempuan</option>
                     </select>
+                    <small class="detail-form">Jenis kelamin pasien. Harus diisi.</small>
                   </div>
                   <div class="form-group">
                     <label>Tempat Lahir</label>
                     <input type="text" name="tempat_lahir" class="form-control">
+                    <small class="detail-form">Tempat lahir pasien. Harus diisi.</small>
                   </div>
                   <div class="form-group">
                     <label>Tanggal Lahir</label>
                     <input type="date" name="tgl_lahir" class="form-control">
+                    <small class="detail-form">Tanggal lahir pasien. Harus diisi.</small>
                   </div>
                   <div class="form-group">
                     <label>Umur</label>
                     <input type="text" name="umur" class="form-control">
+                    <small class="detail-form">Umur pasien. Harus diisi.</small>
                   </div>
                   <div class="form-group">
                     <label>Alamat Asal</label>
                     <input type="text" name="alamat_asal" class="form-control">
+                    <small class="detail-form">Alamat asal pasien. Harus diisi.</small>
                   </div><div class="form-group">
                     <label>Alamat Domisili</label>
                     <input type="text" name="alamat_domisili" class="form-control">
+                    <small class="detail-form">Alamat domisili pasien. Harus diisi.</small>
                   </div><div class="form-group">
                     <label>Pekerjaan</label>
                     <input type="text" name="pekerjaan" class="form-control">
+                    <small class="detail-form">Pekerjaan pasien. Jika tidak ada isikan 'Tidak Ada'.</small>
                   </div><div class="form-group">
                     <label>No. Telp/HP</label>
                     <input type="text" name="telp" class="form-control">
+                    <small class="detail-form">Nomor telepon/handphone pasien. Jika tidak ada isikan 'Tidak Ada'.</small>
                   </div>
                   <div class="form-group">
                     <label>Golongan Darah</label>
@@ -199,6 +209,7 @@
                       <option value="AB">AB</option>
                       <option value="O">O</option>
                     </select>
+                    <small class="detail-form">Golongan darah pasien. Harus diisi.</small>
                   </div>
                   <button type="submit" name="submit" class="btn btn-default">Daftar</button>
                 </form>

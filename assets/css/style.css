@@ -55,3 +55,7 @@ table td:last-child{
 .table-scroll{
   overflow-x: scroll;
 }
+
+.detail-form {
+  color: rgb(150, 150, 150);
+}

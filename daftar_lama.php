@@ -101,8 +101,8 @@
           include 'nav-side.php';
         ?>
         <div class="col-md-10 content main_baru">
-          <h3>PENDAFTARAN</h3>
-          <a href="daftar_pasien.php" class="btn btn-warning">Daftar Baru</a>
+          <h3>PENDAFTARAN - PENGOBATAN</h3>
+          <a href="daftar_pasien.php" class="btn btn-warning">Daftar Pasien</a>
           <div class="clear"></div>
           <hr>
           <div class="row">
@@ -139,6 +139,7 @@
                     <div class="form-group">
                       <label>ID Pasien</label>
                       <input type="text" name="id_pasien" id="id_pasien" class="form-control">
+                      <small class="detail-form">Nomor pasien. Harus diisi.</small>
                     </div>
                     <div class="form-group">
                       <label>Tanggal Daftar</label>
@@ -205,6 +206,7 @@
                           }
                         ?>
                       </select>
+                      <small class="detail-form">Layanan untuk pasien. Harus diisi.</small>
                     </div>
                   </div>
                   <!-- form dokter -->
@@ -223,6 +225,7 @@
                           }
                         ?>
                       </select>
+                      <small class="detail-form">Nama perawat. Harus diisi.</small>
                     </div>
                   </div>
                   <!-- button -->
