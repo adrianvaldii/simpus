@@ -1,6 +1,7 @@
 <?php
   include 'koneksi/koneksi_lokal.php';
   include 'koneksi/koneksi_pusat.php';
+  include 'koneksi/koneksi_dokter.php';
   // timezone
   date_default_timezone_set('Asia/Jakarta');
 
@@ -11,7 +12,16 @@
   $cari = oci_fetch_array($datakode, OCI_BOTH);
 
   if($cari){
-    $id_rekam_medis = $cari[0] + 1;
+    // mengambil tangga dari data maximal
+    $hasil = substr($cari[0], 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $cari[0] + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
   }else{
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
@@ -51,14 +61,28 @@
     $result_pusat = oci_execute($query_pusat);
     oci_commit($conn_pusat);
 
-    if ($result_pasien && $result_pusat) {
+    oci_close($conn_pusat);
+
+    // input to database dokter
+    $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+    oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
+    oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
+    oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
+    oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
+    oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
+
+    $result_dokter = oci_execute($query_dokter);
+    oci_commit($conn_dokter);
+
+    oci_close($conn_dokter);
+
+    if ($result_pasien && $result_pusat && $result_dokter) {
       $status = "berhasil";
     }else{
       $status = "gagal";
     }
-    oci_close($conn_pusat);
-  }
 
+  }
 ?>
 
 <!DOCTYPE html>
