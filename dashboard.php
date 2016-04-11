@@ -3,6 +3,7 @@
 
   include 'koneksi/koneksi_pusat.php';
   include 'koneksi/koneksi_lokal.php';
+  include 'koneksi/koneksi_dokter.php';
 
   if(empty($_SESSION['user'])){
     header("Location: index.php?message=please+login");
@@ -128,24 +129,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <?php
-                      $data_daftar = "select rekam_medis.id_rekam_medis, rekam_medis.id_pasien, pasien.nama_pasien, rekam_medis.id_pelayanan, pelayanan.nama_pelayanan, rekam_medis.id_dokter, dokter.nama_dokter from rekam_medis join pasien on rekam_medis.id_pasien=pasien.id_pasien join pelayanan on rekam_medis.id_pelayanan=pelayanan.id_pelayanan join dokter on rekam_medis.id_dokter=dokter.id_dokter";
-                      $parse_daftar = oci_parse($conn_lokal, $data_daftar);
-                      oci_execute($parse_daftar);
-                      $id = 1;
-                      while (($row_daftar = oci_fetch_array($parse_daftar, OCI_BOTH)) != false) {
-                        ?>
-                        <tr>
-                          <td><?php echo $id++; ?></td>
-                          <td><?php echo $row_daftar['ID_REKAM_MEDIS']; ?></td>
-                          <td><?php echo $row_daftar['ID_PASIEN']; ?></td>
-                          <td><?php echo $row_daftar['NAMA_PASIEN']; ?></td>
-                          <td><?php echo $row_daftar['NAMA_PELAYANAN']; ?></td>
-                          <td><?php echo $row_daftar['NAMA_DOKTER']; ?></td>
-                        </tr>
-                        <?php
-                      }
-                    ?>
+
                   </tbody>
                 </table>
               </div>
@@ -169,6 +153,15 @@
                     ?><span class="status-server label label-success"><?php echo $status_pusat; ?></span><?php
                   }else {
                     ?><span class="status-server label label-danger"><?php echo $status_pusat; ?></span><?php
+                  }
+                ?>
+                <div class="clear"></div>
+                <p class="nama-server">Server Dokter</p>
+                <?php
+                  if ($status_dokter == "ON") {
+                    ?><span class="status-server label label-success"><?php echo $status_dokter; ?></span><?php
+                  }else {
+                    ?><span class="status-server label label-danger"><?php echo $status_dokter; ?></span><?php
                   }
                 ?>
                 <div class="clear"></div>

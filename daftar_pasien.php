@@ -5,15 +5,33 @@
 
   // generate id pasien
   $carikode = "SELECT max(id_pasien) as id_pasien from pasien";
-  $datakode = oci_parse($conn_lokal, $carikode);
-  oci_execute($datakode);
-  $row = oci_fetch_array($datakode);
 
-  if($row){
-    $id_pasien = $row[0] + 1;
-  }else{
-    $id_pasien = "900001";
+  // algoritma basis data id_pasien
+
+  // -- jika koneksi ke lokal jalan
+  if ($status_lokal == "ON") {
+    $datakode = oci_parse($conn_lokal, $carikode);
+    oci_execute($datakode);
+    $row = oci_fetch_array($datakode);
+
+    if($row){
+      $id_pasien = $row[0] + 1;
+    }else{
+      $id_pasien = "900001";
+    }
+    // -- jika koneksi lokal gagal lalu mencari ke server pusat
+  } elseif ($status_pusat == "ON") {
+    $datakode = oci_parse($conn_pusat, $carikode);
+    oci_execute($datakode);
+    $row = oci_fetch_array($datakode);
+
+    if($row){
+      $id_pasien = $row[0] + 1;
+    }else{
+      $id_pasien = "900001";
+    }
   }
+
 
   $status = "";
 
