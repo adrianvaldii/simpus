@@ -48,51 +48,101 @@
     $telp = $_POST['telp'];
     $gol_darah = $_POST['gol_darah'];
 
-    // input to local server
-    $query = oci_parse($conn_lokal, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
-    oci_bind_by_name($query, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query, ":nama_pasien", $nama_pasien);
-    oci_bind_by_name($query, ":nama_ortu", $nama_ortu);
-    oci_bind_by_name($query, ":jenis_kelamin", $jenis_kelamin);
-    oci_bind_by_name($query, ":tempat_lahir", $tempat_lahir);
-    oci_bind_by_name($query, ":tgl_lahir" , $tgl_lahir);
-    oci_bind_by_name($query, ":umur", $umur);
-    oci_bind_by_name($query, ":alamat_asal", $alamat_asal);
-    oci_bind_by_name($query, ":alamat_domisili", $alamat_domisili);
-    oci_bind_by_name($query, ":pekerjaan", $pekerjaan);
-    oci_bind_by_name($query, ":telp", $telp);
-    oci_bind_by_name($query, ":gol_darah", $gol_darah);
+    if ($conn_lokal && $conn_pusat) {
+      // input to local server
+      $query = oci_parse($conn_lokal, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
+      oci_bind_by_name($query, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query, ":nama_pasien", $nama_pasien);
+      oci_bind_by_name($query, ":nama_ortu", $nama_ortu);
+      oci_bind_by_name($query, ":jenis_kelamin", $jenis_kelamin);
+      oci_bind_by_name($query, ":tempat_lahir", $tempat_lahir);
+      oci_bind_by_name($query, ":tgl_lahir" , $tgl_lahir);
+      oci_bind_by_name($query, ":umur", $umur);
+      oci_bind_by_name($query, ":alamat_asal", $alamat_asal);
+      oci_bind_by_name($query, ":alamat_domisili", $alamat_domisili);
+      oci_bind_by_name($query, ":pekerjaan", $pekerjaan);
+      oci_bind_by_name($query, ":telp", $telp);
+      oci_bind_by_name($query, ":gol_darah", $gol_darah);
 
-    $result_lokal = oci_execute($query);
-    oci_commit($conn_lokal);
+      $result_lokal = oci_execute($query);
+      oci_commit($conn_lokal);
 
-    oci_close($conn_lokal);
+      // oci_close($conn_lokal);
 
-    // input to main server
-    $query_pusat = oci_parse($conn_pusat, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
-    oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_pusat, ":nama_pasien", $nama_pasien);
-    oci_bind_by_name($query_pusat, ":nama_ortu", $nama_ortu);
-    oci_bind_by_name($query_pusat, ":jenis_kelamin", $jenis_kelamin);
-    oci_bind_by_name($query_pusat, ":tempat_lahir", $tempat_lahir);
-    oci_bind_by_name($query_pusat, ":tgl_lahir" , $tgl_lahir);
-    oci_bind_by_name($query_pusat, ":umur", $umur);
-    oci_bind_by_name($query_pusat, ":alamat_asal", $alamat_asal);
-    oci_bind_by_name($query_pusat, ":alamat_domisili", $alamat_domisili);
-    oci_bind_by_name($query_pusat, ":pekerjaan", $pekerjaan);
-    oci_bind_by_name($query_pusat, ":telp", $telp);
-    oci_bind_by_name($query_pusat, ":gol_darah", $gol_darah);
+      // input to main server
+      $query_pusat = oci_parse($conn_pusat, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
+      oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pusat, ":nama_pasien", $nama_pasien);
+      oci_bind_by_name($query_pusat, ":nama_ortu", $nama_ortu);
+      oci_bind_by_name($query_pusat, ":jenis_kelamin", $jenis_kelamin);
+      oci_bind_by_name($query_pusat, ":tempat_lahir", $tempat_lahir);
+      oci_bind_by_name($query_pusat, ":tgl_lahir" , $tgl_lahir);
+      oci_bind_by_name($query_pusat, ":umur", $umur);
+      oci_bind_by_name($query_pusat, ":alamat_asal", $alamat_asal);
+      oci_bind_by_name($query_pusat, ":alamat_domisili", $alamat_domisili);
+      oci_bind_by_name($query_pusat, ":pekerjaan", $pekerjaan);
+      oci_bind_by_name($query_pusat, ":telp", $telp);
+      oci_bind_by_name($query_pusat, ":gol_darah", $gol_darah);
 
-    $result_pusat = oci_execute($query_pusat);
-    oci_commit($conn_pusat);
+      $result_pusat = oci_execute($query_pusat);
+      oci_commit($conn_pusat);
 
-    oci_close($conn_pusat);
+      // oci_close($conn_pusat);
 
-    if ($result_lokal && $result_pusat) {
-      $status = "berhasil";
-    }else{
-      $status = "gagal";
+      $status = "Data berhasil ditambahkan pada kedua server (Pasien & Dokter)";
+    } elseif ($conn_lokal) {
+      // input to local server
+      $query = oci_parse($conn_lokal, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
+      oci_bind_by_name($query, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query, ":nama_pasien", $nama_pasien);
+      oci_bind_by_name($query, ":nama_ortu", $nama_ortu);
+      oci_bind_by_name($query, ":jenis_kelamin", $jenis_kelamin);
+      oci_bind_by_name($query, ":tempat_lahir", $tempat_lahir);
+      oci_bind_by_name($query, ":tgl_lahir" , $tgl_lahir);
+      oci_bind_by_name($query, ":umur", $umur);
+      oci_bind_by_name($query, ":alamat_asal", $alamat_asal);
+      oci_bind_by_name($query, ":alamat_domisili", $alamat_domisili);
+      oci_bind_by_name($query, ":pekerjaan", $pekerjaan);
+      oci_bind_by_name($query, ":telp", $telp);
+      oci_bind_by_name($query, ":gol_darah", $gol_darah);
+
+      $result_lokal = oci_execute($query);
+      oci_commit($conn_lokal);
+
+      // oci_close($conn_lokal);
+
+      $status = "Data berhasil ditambahkan pada server Pasien (Masalah pada server Dokter)";
+    } elseif ($conn_pusat) {
+      // input to main server
+      $query_pusat = oci_parse($conn_pusat, "INSERT INTO pasien (id_pasien, nama_pasien, nama_ortu, jenis_kelamin, tgl_lahir, tempat_lahir, umur, alamat_asal, alamat_domisili, pekerjaan, telp, gol_darah) VALUES (:id_pasien, :nama_pasien, :nama_ortu, :jenis_kelamin, to_date(:tgl_lahir, 'YYYY-MM-DD'), :tempat_lahir, :umur, :alamat_asal, :alamat_domisili, :pekerjaan, :telp, :gol_darah)");
+      oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pusat, ":nama_pasien", $nama_pasien);
+      oci_bind_by_name($query_pusat, ":nama_ortu", $nama_ortu);
+      oci_bind_by_name($query_pusat, ":jenis_kelamin", $jenis_kelamin);
+      oci_bind_by_name($query_pusat, ":tempat_lahir", $tempat_lahir);
+      oci_bind_by_name($query_pusat, ":tgl_lahir" , $tgl_lahir);
+      oci_bind_by_name($query_pusat, ":umur", $umur);
+      oci_bind_by_name($query_pusat, ":alamat_asal", $alamat_asal);
+      oci_bind_by_name($query_pusat, ":alamat_domisili", $alamat_domisili);
+      oci_bind_by_name($query_pusat, ":pekerjaan", $pekerjaan);
+      oci_bind_by_name($query_pusat, ":telp", $telp);
+      oci_bind_by_name($query_pusat, ":gol_darah", $gol_darah);
+
+      $result_pusat = oci_execute($query_pusat);
+      oci_commit($conn_pusat);
+
+      // oci_close($conn_pusat);
+
+      $status = "Data berhasil ditambahkan pada server Dokter (Masalah pada server Pasien)";
+    } else {
+      $status = "Data gagal ditambahkan. Masalah pada kedua server.";
     }
+
+    // if ($result_lokal && $result_pusat) {
+    //   $status = "berhasil";
+    // }else{
+    //   $status = "gagal";
+    // }
 
   }
 
@@ -142,26 +192,16 @@
           <div class="row">
             <div class="col-md-12">
               <div class="kotak">
+
                 <?php
-                  if($status == "berhasil")
-                  {
-                    ?>
-                    <div class="alert alert-success alert-dismissible" role="alert">
+                  if (isset($_POST['submit'])) {
+                    ?><div class="alert alert-success alert-dismissible" role="alert">
                       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      <strong>Berhasil!</strong> Pendaftaran berhasil dilakukan.
-                    </div>
-                    <?php
-                  }
-                  elseif($status == "gagal")
-                  {
-                    ?>
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      <strong>Gagal!</strong> Pendaftaran gagal dilakukan.
-                    </div>
-                    <?php
+                      <?php echo $status; ?>
+                    </div><?php
                   }
                 ?>
+
                 <form action="daftar_pasien.php" method="post" autocomplete="off">
                   <div class="form-group">
                     <label>ID Pasien</label>

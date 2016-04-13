@@ -21,7 +21,7 @@
     $row['gol_darah'] = $data['GOL_DARAH'];
     $row_set[] = $row;
   }
-
+  
   echo json_encode($row_set);
 
 ?>

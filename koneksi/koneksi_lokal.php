@@ -1,7 +1,7 @@
 <?php
 
   $username = "resepsionis";
-  $password = "resepsionis";
+  $password = "resepsioni";
   $database = "localhost/XE";
 
   $conn_lokal = oci_connect($username, $password, $database);
