@@ -1,4 +1,5 @@
 <?php
+  error_reporting(0);
   include 'koneksi/koneksi_lokal.php';
   include 'koneksi/koneksi_pusat.php';
   include 'koneksi/koneksi_dokter.php';
@@ -7,24 +8,66 @@
 
   // generate id daftar berobat
   $caridata = "SELECT max(id_daftar) as id_rekam_medis from rekam_medis";
-  $datakode = oci_parse($conn_lokal, $caridata);
-  oci_execute($datakode);
-  $cari = oci_fetch_array($datakode, OCI_BOTH);
+  if ($status_lokal == "ON") {
+    $datakode = oci_parse($conn_lokal, $caridata);
+    oci_execute($datakode);
+    $cari = oci_fetch_array($datakode, OCI_BOTH);
 
-  if($cari){
-    // mengambil tangga dari data maximal
-    $hasil = substr($cari[0], 0, 8);
-    // deklarasi variabel $sekarang yang berisi tanggal sekarang
-    $sekarang = date("Ymd");
+    if($cari){
+      // mengambil tangga dari data maximal
+      $hasil = substr($cari[0], 0, 8);
+      // deklarasi variabel $sekarang yang berisi tanggal sekarang
+      $sekarang = date("Ymd");
 
-    if ($hasil == $sekarang) {
-      $id_rekam_medis = $cari[0] + 1;
-    }else {
-      $id_rekam_medis = $sekarang . "001";
+      if ($hasil == $sekarang) {
+        $id_rekam_medis = $cari[0] + 1;
+      }else {
+        $id_rekam_medis = $sekarang . "001";
+      }
+    }else{
+      $date = date("Ymd");
+      $id_rekam_medis = $date . "001";
     }
-  }else{
-    $date = date("Ymd");
-    $id_rekam_medis = $date . "001";
+  } elseif ($status_pusat == "ON") {
+    $datakode = oci_parse($conn_pusat, $caridata);
+    oci_execute($datakode);
+    $cari = oci_fetch_array($datakode, OCI_BOTH);
+
+    if($cari){
+      // mengambil tangga dari data maximal
+      $hasil = substr($cari[0], 0, 8);
+      // deklarasi variabel $sekarang yang berisi tanggal sekarang
+      $sekarang = date("Ymd");
+
+      if ($hasil == $sekarang) {
+        $id_rekam_medis = $cari[0] + 1;
+      }else {
+        $id_rekam_medis = $sekarang . "001";
+      }
+    }else{
+      $date = date("Ymd");
+      $id_rekam_medis = $date . "001";
+    }
+  } elseif ($status_dokter == "ON") {
+    $datakode = oci_parse($conn_dokter, $caridata);
+    oci_execute($datakode);
+    $cari = oci_fetch_array($datakode, OCI_BOTH);
+
+    if($cari){
+      // mengambil tangga dari data maximal
+      $hasil = substr($cari[0], 0, 8);
+      // deklarasi variabel $sekarang yang berisi tanggal sekarang
+      $sekarang = date("Ymd");
+
+      if ($hasil == $sekarang) {
+        $id_rekam_medis = $cari[0] + 1;
+      }else {
+        $id_rekam_medis = $sekarang . "001";
+      }
+    }else{
+      $date = date("Ymd");
+      $id_rekam_medis = $date . "001";
+    }
   }
 
   // insert data to database
@@ -37,49 +80,182 @@
     $daftar_pelayanan = $_POST['daftar_pelayanan'];
     $daftar_perawat = $_POST['daftar_perawat'];
 
-    // input to database pasien
-    $query_pasien = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    oci_bind_by_name($query_pasien, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_pasien, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_pasien, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_pasien, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_pasien, ":id_perawat" , $daftar_perawat);
+    if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
+      // input to database pasien
+      $query_pasien = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_pasien, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_pasien, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_pasien, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pasien, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_pasien, ":id_perawat" , $daftar_perawat);
 
-    $result_pasien = oci_execute($query_pasien);
-    oci_commit($conn_lokal);
+      $result_pasien = oci_execute($query_pasien);
+      oci_commit($conn_lokal);
 
-    oci_close($conn_lokal);
+      // oci_close($conn_lokal);
 
-    // input to database pusat
-    $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
+      // input to database pusat
+      $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
 
-    $result_pusat = oci_execute($query_pusat);
-    oci_commit($conn_pusat);
+      $result_pusat = oci_execute($query_pusat);
+      oci_commit($conn_pusat);
 
-    oci_close($conn_pusat);
+      // oci_close($conn_pusat);
 
-    // input to database dokter
-    $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
+      // input to database dokter
+      $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
 
-    $result_dokter = oci_execute($query_dokter);
-    oci_commit($conn_dokter);
+      $result_dokter = oci_execute($query_dokter);
+      oci_commit($conn_dokter);
 
-    oci_close($conn_dokter);
+      // oci_close($conn_dokter);
 
-    if ($result_pasien && $result_pusat && $result_dokter) {
-      $status = "berhasil";
-    }else{
-      $status = "gagal";
+      $status = "Data berhasil ditambahkan pada ketiga server";
+
+    } elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_dokter == "OFF") {
+        // input to database pasien
+        $query_pasien = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+        oci_bind_by_name($query_pasien, ":id_daftar", $id_daftar);
+        oci_bind_by_name($query_pasien, ":tgl_daftar", $tgl_daftar);
+        oci_bind_by_name($query_pasien, ":id_pasien", $id_pasien);
+        oci_bind_by_name($query_pasien, ":id_pelayanan", $daftar_pelayanan);
+        oci_bind_by_name($query_pasien, ":id_perawat" , $daftar_perawat);
+
+        $result_pasien = oci_execute($query_pasien);
+        oci_commit($conn_lokal);
+
+        // oci_close($conn_lokal);
+
+        $status = "Data berhasil ditambahkan pada satu server (Pasien)";
+
+    } elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_dokter == "OFF") {
+        // input to database pusat
+        $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+        oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
+        oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
+        oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+        oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
+        oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
+
+        $result_pusat = oci_execute($query_pusat);
+        oci_commit($conn_pusat);
+
+        // oci_close($conn_pusat);
+
+        $status = "Data berhasil ditambahkan pada satu server (Pusat)";
+
+    } elseif ($status_lokal == "OFF" && $status_pusat == "OFF" && $status_dokter == "ON") {
+      // input to database dokter
+      $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
+
+      $result_dokter = oci_execute($query_dokter);
+      oci_commit($conn_dokter);
+
+      // oci_close($conn_dokter);
+
+      $status = "Data berhasil ditambahkan pada satu server (Dokter)";
+
+    } elseif ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "OFF") {
+      // input to database pasien
+      $query_pasien = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_pasien, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_pasien, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_pasien, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pasien, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_pasien, ":id_perawat" , $daftar_perawat);
+
+      $result_pasien = oci_execute($query_pasien);
+      oci_commit($conn_lokal);
+
+      // oci_close($conn_lokal);
+
+      // input to database pusat
+      $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
+
+      $result_pusat = oci_execute($query_pusat);
+      oci_commit($conn_pusat);
+
+      // oci_close($conn_pusat);
+
+      $status = "Data berhasil ditambahkan pada kedua server (Pasien & Pusat)";
+
+    } elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_dokter == "ON") {
+      // input to database pasien
+      $query_pasien = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_pasien, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_pasien, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_pasien, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pasien, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_pasien, ":id_perawat" , $daftar_perawat);
+
+      $result_pasien = oci_execute($query_pasien);
+      oci_commit($conn_lokal);
+
+      // oci_close($conn_lokal);
+
+      // input to database dokter
+      $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
+
+      $result_dokter = oci_execute($query_dokter);
+      oci_commit($conn_dokter);
+
+      // oci_close($conn_dokter);
+
+      $status = "Data berhasil ditambahkan pada kedua server (Pasien & Dokter)";
+
+    } elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_dokter == "ON") {
+      // input to database pusat
+      $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
+
+      $result_pusat = oci_execute($query_pusat);
+      oci_commit($conn_pusat);
+
+      // oci_close($conn_pusat);
+
+      // input to database dokter
+      $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
+      oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
+      oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
+      oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
+      oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
+      oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
+
+      $result_dokter = oci_execute($query_dokter);
+      oci_commit($conn_dokter);
+
+      // oci_close($conn_dokter);
+
+      $status = "Data berhasil ditambahkan pada kedua server (Pusat & Dokter)";
     }
 
   }
@@ -132,23 +308,11 @@
           <div class="row">
             <div class="col-md-12">
               <?php
-                if($status == "berhasil")
-                {
-                  ?>
-                  <div class="alert alert-success alert-dismissible" role="alert">
+                if (isset($_POST['submit'])) {
+                  ?><div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Berhasil!</strong> Pendaftaran berhasil dilakukan.
-                  </div>
-                  <?php
-                }
-                elseif($status == "gagal")
-                {
-                  ?>
-                  <div class="alert alert-danger alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Gagal!</strong> Pendaftaran gagal dilakukan.
-                  </div>
-                  <?php
+                    <?php echo $status; ?>
+                  </div><?php
                 }
               ?>
               <form action="daftar_lama.php" method="post" autocomplete="off">
@@ -222,11 +386,27 @@
                         <option>-- Pilih Pelayanan --</option>
                         <?php
                           $data_pelayanan = "SELECT * FROM pelayanan";
-                          $pelayanan = oci_parse($conn_lokal, $data_pelayanan);
-                          oci_execute($pelayanan);
+                          if ($status_lokal == "ON" && $status_pusat == "OFF") {
+                            $pelayanan = oci_parse($conn_lokal, $data_pelayanan);
+                            oci_execute($pelayanan);
 
-                          while (($row = oci_fetch_array($pelayanan, OCI_BOTH)) != false) {
-                            ?><option value="<?php echo $row['ID_PELAYANAN']; ?>"><?php echo $row['NAMA_PELAYANAN']; ?></option> <?php
+                            while (($row = oci_fetch_array($pelayanan, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PELAYANAN']; ?>"><?php echo $row['NAMA_PELAYANAN']; ?></option> <?php
+                            }
+                          } elseif ($status_lokal == "OFF" && $status_pusat == "ON") {
+                            $pelayanan = oci_parse($conn_pusat, $data_pelayanan);
+                            oci_execute($pelayanan);
+
+                            while (($row = oci_fetch_array($pelayanan, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PELAYANAN']; ?>"><?php echo $row['NAMA_PELAYANAN']; ?></option> <?php
+                            }
+                          } elseif ($status_lokal == "ON" && $status_pusat == "OFF") {
+                            $pelayanan = oci_parse($conn_lokal, $data_pelayanan);
+                            oci_execute($pelayanan);
+
+                            while (($row = oci_fetch_array($pelayanan, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PELAYANAN']; ?>"><?php echo $row['NAMA_PELAYANAN']; ?></option> <?php
+                            }
                           }
                         ?>
                       </select>
@@ -241,11 +421,28 @@
                         <option>-- Pilih Perawat --</option>
                         <?php
                           $data_perawat = "SELECT * FROM perawat";
-                          $perawat = oci_parse($conn_lokal, $data_perawat);
-                          oci_execute($perawat);
 
-                          while (($row = oci_fetch_array($perawat, OCI_BOTH)) != false) {
-                            ?><option value="<?php echo $row['ID_PERAWAT']; ?>"><?php echo $row['NAMA_PERAWAT']; ?></option> <?php
+                          if ($status_lokal == "ON" && $status_pusat == "ON") {
+                            $perawat = oci_parse($conn_lokal, $data_perawat);
+                            oci_execute($perawat);
+
+                            while (($row = oci_fetch_array($perawat, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PERAWAT']; ?>"><?php echo $row['NAMA_PERAWAT']; ?></option> <?php
+                            }
+                          } elseif ($status_lokal == "ON" && $status_pusat == "OFF") {
+                            $perawat = oci_parse($conn_lokal, $data_perawat);
+                            oci_execute($perawat);
+
+                            while (($row = oci_fetch_array($perawat, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PERAWAT']; ?>"><?php echo $row['NAMA_PERAWAT']; ?></option> <?php
+                            }
+                          } elseif ($status_lokal == "OFF" && $status_pusat == "ON") {
+                            $perawat = oci_parse($conn_pusat, $data_perawat);
+                            oci_execute($perawat);
+
+                            while (($row = oci_fetch_array($perawat, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PERAWAT']; ?>"><?php echo $row['NAMA_PERAWAT']; ?></option> <?php
+                            }
                           }
                         ?>
                       </select>
