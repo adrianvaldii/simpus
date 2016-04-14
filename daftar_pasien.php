@@ -1,5 +1,5 @@
 <?php
-
+  error_reporting(0);
   include 'koneksi/koneksi_lokal.php';
   include 'koneksi/koneksi_pusat.php';
 
