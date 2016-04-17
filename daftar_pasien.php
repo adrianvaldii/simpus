@@ -8,8 +8,27 @@
 
   // algoritma basis data id_pasien
 
-  // -- jika koneksi ke lokal jalan
-  if ($status_lokal == "ON") {
+  // jika koneksi keduanya jalan
+  if (condition) {
+    $kode_lokal = "SELECT max(id_pasien) as id_pasien from pasien";
+    $kode_pusat = "SELECT max(id_pasien) as id_pasien from pasien";
+
+    $data_lokal = oci_parse($conn_lokal, $kode_lokal);
+    oci_execute($data_lokal);
+    $row_lokal = oci_fetch_array($data_lokal);
+
+    $data_pusat = oci_parse($conn_pusat, $kode_pusat);
+    oci_execute($data_pusat);
+    $row_pusat = oci_fetch_array($data_pusat);
+
+    if ($row_lokal && $row_pusat != 0 && $row_lokal > $row_pusat) {
+      $id_pasien = $row_lokal[0] + 1;
+    } else {
+      $id_pasien = $row_pusat[0] + 1;
+    }
+
+    // jika koneksi lokal on pusat off
+  } elseif ($status_lokal == "ON") {
     $datakode = oci_parse($conn_lokal, $carikode);
     oci_execute($datakode);
     $row = oci_fetch_array($datakode);
