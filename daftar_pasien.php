@@ -23,8 +23,10 @@
 
     if ($row_lokal && $row_pusat != 0 && $row_lokal > $row_pusat) {
       $id_pasien = $row_lokal[0] + 1;
-    } else {
+    } elseif ($row_lokal && $row_pusat != 0 && $row_pusat > $row_lokal) {
       $id_pasien = $row_pusat[0] + 1;
+    } else {
+      $id_pasien = "900001";
     }
 
     // jika koneksi lokal on pusat off
