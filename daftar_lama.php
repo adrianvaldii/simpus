@@ -1,74 +1,12 @@
 <?php
-  error_reporting(0);
-  include 'koneksi/koneksi_lokal.php';
-  include 'koneksi/koneksi_pusat.php';
-  include 'koneksi/koneksi_dokter.php';
+  // error_reporting(0);
+  include_once 'koneksi/koneksi_lokal.php';
+  include_once 'koneksi/koneksi_pusat.php';
+  include_once 'koneksi/koneksi_dokter.php';
   // timezone
   date_default_timezone_set('Asia/Jakarta');
 
-  // generate id daftar berobat
-  $caridata = "SELECT max(id_daftar) as id_rekam_medis from rekam_medis";
-  if ($status_lokal == "ON") {
-    $datakode = oci_parse($conn_lokal, $caridata);
-    oci_execute($datakode);
-    $cari = oci_fetch_array($datakode, OCI_BOTH);
-
-    if($cari){
-      // mengambil tangga dari data maximal
-      $hasil = substr($cari[0], 0, 8);
-      // deklarasi variabel $sekarang yang berisi tanggal sekarang
-      $sekarang = date("Ymd");
-
-      if ($hasil == $sekarang) {
-        $id_rekam_medis = $cari[0] + 1;
-      }else {
-        $id_rekam_medis = $sekarang . "001";
-      }
-    }else{
-      $date = date("Ymd");
-      $id_rekam_medis = $date . "001";
-    }
-  } elseif ($status_pusat == "ON") {
-    $datakode = oci_parse($conn_pusat, $caridata);
-    oci_execute($datakode);
-    $cari = oci_fetch_array($datakode, OCI_BOTH);
-
-    if($cari){
-      // mengambil tangga dari data maximal
-      $hasil = substr($cari[0], 0, 8);
-      // deklarasi variabel $sekarang yang berisi tanggal sekarang
-      $sekarang = date("Ymd");
-
-      if ($hasil == $sekarang) {
-        $id_rekam_medis = $cari[0] + 1;
-      }else {
-        $id_rekam_medis = $sekarang . "001";
-      }
-    }else{
-      $date = date("Ymd");
-      $id_rekam_medis = $date . "001";
-    }
-  } elseif ($status_dokter == "ON") {
-    $datakode = oci_parse($conn_dokter, $caridata);
-    oci_execute($datakode);
-    $cari = oci_fetch_array($datakode, OCI_BOTH);
-
-    if($cari){
-      // mengambil tangga dari data maximal
-      $hasil = substr($cari[0], 0, 8);
-      // deklarasi variabel $sekarang yang berisi tanggal sekarang
-      $sekarang = date("Ymd");
-
-      if ($hasil == $sekarang) {
-        $id_rekam_medis = $cari[0] + 1;
-      }else {
-        $id_rekam_medis = $sekarang . "001";
-      }
-    }else{
-      $date = date("Ymd");
-      $id_rekam_medis = $date . "001";
-    }
-  }
+  include_once 'generate_id_daftar.php';
 
   // insert data to database
   $status = "";
@@ -386,7 +324,14 @@
                         <option>-- Pilih Pelayanan --</option>
                         <?php
                           $data_pelayanan = "SELECT * FROM pelayanan";
-                          if ($status_lokal == "ON" && $status_pusat == "OFF") {
+                          if ($status_lokal == "ON" && $status_pusat == "ON") {
+                            $pelayanan = oci_parse($conn_lokal, $data_pelayanan);
+                            oci_execute($pelayanan);
+
+                            while (($row = oci_fetch_array($pelayanan, OCI_BOTH)) != false) {
+                              ?><option value="<?php echo $row['ID_PELAYANAN']; ?>"><?php echo $row['NAMA_PELAYANAN']; ?></option> <?php
+                            }
+                          } elseif ($status_lokal == "ON" && $status_pusat == "OFF") {
                             $pelayanan = oci_parse($conn_lokal, $data_pelayanan);
                             oci_execute($pelayanan);
 
