@@ -6,7 +6,9 @@
   // connect to database oracle pusat
   include 'koneksi/koneksi_pusat.php';
 
-  $sql = "SELECT * FROM pasien";
+  $term = trim(strip_tags(strtoupper($_GET['term'])));
+
+  $sql = "SELECT * FROM pasien WHERE id_pasien LIKE '".$term."%' AND ROWNUM < 8";
 
   if ($status_lokal == "ON" && $status_pusat == "ON") {
     $datapasien = oci_parse($conn_lokal, $sql);
