@@ -1,7 +1,14 @@
-<?php
+<?php session_start();
   // error_reporting(0);
   include_once 'koneksi/koneksi_lokal.php';
   include_once 'koneksi/koneksi_pusat.php';
+
+  // session login
+  if(empty($_SESSION['user'])){
+    header("Location: index.php");
+
+    die("Redirecting to: index.php");
+  }
 
   // generate id_pasien
   include_once 'generate_id_pasien.php';
