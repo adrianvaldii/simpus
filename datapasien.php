@@ -33,7 +33,7 @@
     echo json_encode($row_set);
 
   } elseif ($status_lokal == "ON" && $status_pusat == "OFF") {
-    $datapasien = oci_parse($conn_pusat, $sql);
+    $datapasien = oci_parse($conn_lokal, $sql);
     oci_execute($datapasien);
 
     while ($data = oci_fetch_array($datapasien, OCI_BOTH)) {
@@ -53,7 +53,7 @@
     }
 
     echo json_encode($row_set);
-    
+
   } elseif ($status_lokal == "OFF" && $status_pusat == "ON") {
     $datapasien = oci_parse($conn_pusat, $sql);
     oci_execute($datapasien);
