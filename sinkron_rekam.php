@@ -23,9 +23,9 @@
     oci_commit($conn_lokal);
 
     if ($result) {
-      $status = "Good Job! Data berhasil disinkronisasi.";
+      $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
-      $status = "Bad News! Data gagal disinkronisasi.";
+      $status = "Bad News! Data rekam medis gagal disinkronisasi.";
     }
     oci_close($conn_lokal);
   }
@@ -39,9 +39,9 @@
     oci_commit($conn_pusat);
 
     if ($result) {
-      $status = "Good Job! Data berhasil disinkronisasi.";
+      $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
-      $status = "Bad News! Data gagal disinkronisasi.";
+      $status = "Bad News! Data rekam medis gagal disinkronisasi.";
     }
     oci_close($conn_pusat);
   }
@@ -55,9 +55,9 @@
     oci_commit($conn_lokal);
 
     if ($result) {
-      $status = "Good Job! Data berhasil disinkronisasi.";
+      $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
-      $status = "Bad News! Data gagal disinkronisasi.";
+      $status = "Bad News! Data rekam medis gagal disinkronisasi.";
     }
     oci_close($conn_lokal);
   }
@@ -71,9 +71,9 @@
     oci_commit($conn_lokal);
 
     if ($result) {
-      $status = "Good Job! Data berhasil disinkronisasi.";
+      $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
-      $status = "Bad News! Data gagal disinkronisasi.";
+      $status = "Bad News! Data rekam medis gagal disinkronisasi.";
     }
     oci_close($conn_lokal);
   }
