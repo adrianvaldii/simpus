@@ -1,6 +1,6 @@
 <?php
 
-  $username = "pusa";
+  $username = "pusat";
   $password = "pusat";
   $database = "localhost/XE";
 

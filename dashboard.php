@@ -79,37 +79,7 @@
                   </thead>
                   <tbody>
                     <?php
-                      $data = "SELECT * FROM pasien";
-                      $data_parse = oci_parse($conn_lokal, $data);
-                      oci_execute($data_parse);
-                      $no = 1;
-                      while (($row = oci_fetch_array($data_parse, OCI_BOTH)) != false) {
-                        ?>
-                        <tr>
-                          <td><?php echo $no++; ?></td>
-                          <td><?php echo $row['ID_PASIEN']; ?></td>
-                          <td><?php echo $row['NAMA_PASIEN']; ?></td>
-                          <td><?php echo $row['NAMA_ORTU']; ?></td>
-                          <td>
-                            <?php
-                              if($row['JENIS_KELAMIN'] == "L"){
-                                echo "Laki-laki";
-                              }elseif ($row['JENIS_KELAMIN'] == "P") {
-                                echo "Perempuan";
-                              }
-                            ?>
-                          </td>
-                          <td><?php echo $row['TEMPAT_LAHIR']; ?></td>
-                          <td><?php echo date("d F Y", strtotime($row['TGL_LAHIR'])) ?></td>
-                          <td><?php echo $row['UMUR']; ?></td>
-                          <td><?php echo $row['ALAMAT_ASAL']; ?></td>
-                          <td><?php echo $row['ALAMAT_DOMISILI']; ?></td>
-                          <td><?php echo $row['PEKERJAAN']; ?></td>
-                          <td><?php echo $row['TELP']; ?></td>
-                          <td><?php echo $row['GOL_DARAH']; ?></td>
-                        </tr>
-                        <?php
-                      }
+                      
                     ?>
                   </tbody>
                 </table>
