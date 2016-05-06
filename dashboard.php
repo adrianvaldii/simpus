@@ -1,9 +1,10 @@
 <?php session_start();
   // error_reporting(0);
 
-  include 'koneksi/koneksi_pusat.php';
-  include 'koneksi/koneksi_lokal.php';
-  include 'koneksi/koneksi_dokter.php';
+  include_once 'koneksi/koneksi_pusat.php';
+  include_once 'koneksi/koneksi_lokal.php';
+  include_once 'koneksi/koneksi_dokter.php';
+  include_once 'koneksi/koneksi_apoteker.php';
 
   if(empty($_SESSION['user'])){
     header("Location: index.php?message=please+login");
@@ -79,7 +80,7 @@
                   </thead>
                   <tbody>
                     <?php
-                      
+
                     ?>
                   </tbody>
                 </table>
@@ -108,7 +109,7 @@
               <div class="kotak">
                 <h4>STATUS SERVER</h4>
                 <hr>
-                <p class="nama-server">Server Lokal (Oracle)</p>
+                <p class="nama-server">Server Lokal</p>
                 <?php
                   if ($status_lokal == "ON") {
                     ?><span class="status-server label label-success"><?php echo $status_lokal; ?></span><?php
@@ -132,6 +133,15 @@
                     ?><span class="status-server label label-success"><?php echo $status_dokter; ?></span><?php
                   }else {
                     ?><span class="status-server label label-danger"><?php echo $status_dokter; ?></span><?php
+                  }
+                ?>
+                <div class="clear"></div>
+                <p class="nama-server">Server Apoteker</p>
+                <?php
+                  if ($status_apoteker == "ON") {
+                    ?><span class="status-server label label-success"><?php echo $status_apoteker; ?></span><?php
+                  }else {
+                    ?><span class="status-server label label-danger"><?php echo $status_apoteker; ?></span><?php
                   }
                 ?>
                 <div class="clear"></div>
