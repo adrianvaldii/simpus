@@ -1,24 +1,31 @@
 <?php
+// mysql
+include_once 'koneksi/mysql_lokal.php';
+include_once 'koneksi/mysql_pusat.php';
+include_once 'koneksi/mysql_dokter.php';
+include_once 'koneksi/mysql_apoteker.php';
 // generate id daftar berobat
-$caridata = "SELECT max(id_daftar) as id_rekam_medis from rekam_medis";
+$caridata = "SELECT MAX(id_daftar) as id_rekam_medis from rekam_medis";
 
 // mendapatkan id_daftar dari server resepsionis
-$data_lokal = oci_parse($conn_lokal, $caridata);
-oci_execute($data_lokal);
-$cari_lokal = oci_fetch_array($data_lokal, OCI_BOTH);
+$data_lokal = $mysqli_lokal->query($caridata);
+$cari_lokal = $data_lokal->fetch_array(MYSQLI_NUM);
 
 // mendapatkan id_daftar dari server pusat
-$data_pusat = oci_parse($conn_pusat, $caridata);
-oci_execute($data_pusat);
-$cari_pusat = oci_fetch_array($data_pusat, OCI_BOTH);
+$data_pusat = $mysqli_pusat->query($caridata);
+$cari_pusat = $data_pusat->fetch_array(MYSQLI_NUM);
 
 // mendapatkan id_daftar dari server dokter
-$data_dokter = oci_parse($conn_dokter, $caridata);
-oci_execute($data_dokter);
-$cari_dokter = oci_fetch_array($data_dokter, OCI_BOTH);
+$data_dokter = $mysqli_dokter->query($caridata);
+$cari_dokter = $data_dokter->fetch_array(MYSQLI_NUM);
 
-if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
-  if ($cari_lokal && $cari_pusat && $cari_dokter) {
+// mendapatkan id_daftar dari server apoteker
+$data_apoteker = $mysqli_apoteker->query($caridata);
+$cari_apoteker = $data_apoteker->fetch_array(MYSQLI_NUM);
+
+// logika distribusi
+if ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
+  if ($cari_lokal && $cari_pusat && $cari_dokter && $cari_apoteker) {
     $nilai_max = max($cari_lokal[0], $cari_pusat[0], $cari_dokter[0]);
     // mengambil tangga dari data maximal
     $hasil = substr($nilai_max, 0, 8);
@@ -34,7 +41,71 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
-} elseif ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "OFF") {
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF") {
+  if ($cari_lokal) {
+    // mengambil tangga dari data maximal
+    $hasil = substr($cari_lokal[0], 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF") {
+  if ($cari_pusat) {
+    // mengambil tangga dari data maximal
+    $hasil = substr($cari_pusat[0], 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
+  if ($cari_apoteker) {
+    // mengambil tangga dari data maximal
+    $hasil = substr($cari_apoteker[0], 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} else if ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
+  if ($cari_dokter) {
+    // mengambil tangga dari data maximal
+    $hasil = substr($cari_dokter[0], 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF") {
   if ($cari_lokal && $cari_pusat) {
     $nilai_max = max($cari_lokal[0], $cari_pusat[0]);
     // mengambil tangga dari data maximal
@@ -51,8 +122,25 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
-} elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_dokter == "ON") {
-  if ($cari_lokal && $cari_dokter) {
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
+  if ($cari_lokal && $cari_apoteker) {
+    $nilai_max = max($cari_lokal[0], $cari_apoteker[0]);
+    // mengambil tangga dari data maximal
+    $hasil = substr($nilai_max, 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
+  if ($cari_lokal && $cari_dokter ) {
     $nilai_max = max($cari_lokal[0], $cari_dokter[0]);
     // mengambil tangga dari data maximal
     $hasil = substr($nilai_max, 0, 8);
@@ -68,8 +156,25 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
-} elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_dokter == "ON") {
-  if ($cari_pusat && $cari_dokter) {
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
+  if ($cari_pusat && $cari_apoteker) {
+    $nilai_max = max($cari_pusat[0], $cari_apoteker[0]);
+    // mengambil tangga dari data maximal
+    $hasil = substr($nilai_max, 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
+  if ($cari_pusat && $cari_dokter ) {
     $nilai_max = max($cari_pusat[0], $cari_dokter[0]);
     // mengambil tangga dari data maximal
     $hasil = substr($nilai_max, 0, 8);
@@ -85,9 +190,9 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
-} elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_dokter == "OFF") {
-  if ($cari_lokal) {
-    $nilai_max = max($cari_lokal[0]);
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
+  if ($cari_apoteker && $cari_dokter ) {
+    $nilai_max = max($cari_apoteker[0], $cari_dokter[0]);
     // mengambil tangga dari data maximal
     $hasil = substr($nilai_max, 0, 8);
     // deklarasi variabel $sekarang yang berisi tanggal sekarang
@@ -102,9 +207,9 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
-} elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_dokter == "OFF") {
-  if ($cari_pusat) {
-    $nilai_max = max($cari_pusat[0]);
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
+  if ($cari_lokal && $cari_apoteker && $cari_dokter ) {
+    $nilai_max = max($cari_lokal[0], $cari_apoteker[0], $cari_dokter[0]);
     // mengambil tangga dari data maximal
     $hasil = substr($nilai_max, 0, 8);
     // deklarasi variabel $sekarang yang berisi tanggal sekarang
@@ -119,9 +224,9 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
-} elseif ($status_lokal == "OFF" && $status_pusat == "OFF" && $status_dokter == "ON") {
-  if ($cari_dokter) {
-    $nilai_max = max($cari_dokter[0]);
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
+  if ($cari_lokal && $cari_pusat && $cari_dokter ) {
+    $nilai_max = max($cari_lokal[0], $cari_pusat[0], $cari_dokter[0]);
     // mengambil tangga dari data maximal
     $hasil = substr($nilai_max, 0, 8);
     // deklarasi variabel $sekarang yang berisi tanggal sekarang
@@ -136,6 +241,42 @@ if ($status_lokal == "ON" && $status_pusat == "ON" && $status_dokter == "ON") {
     $date = date("Ymd");
     $id_rekam_medis = $date . "001";
   }
+} elseif ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
+  if ($cari_lokal && $cari_pusat && $cari_apoteker) {
+    $nilai_max = max($cari_lokal[0], $cari_pusat[0], $cari_apoteker[0]);
+    // mengambil tangga dari data maximal
+    $hasil = substr($nilai_max, 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
+  if ($cari_pusat && $cari_apoteker && $cari_dokter ) {
+    $nilai_max = max($cari_apoteker[0], $cari_pusat[0], $cari_dokter[0]);
+    // mengambil tangga dari data maximal
+    $hasil = substr($nilai_max, 0, 8);
+    // deklarasi variabel $sekarang yang berisi tanggal sekarang
+    $sekarang = date("Ymd");
+
+    if ($hasil == $sekarang) {
+      $id_rekam_medis = $nilai_max + 1;
+    }else {
+      $id_rekam_medis = $sekarang . "001";
+    }
+  } else {
+    $date = date("Ymd");
+    $id_rekam_medis = $date . "001";
+  }
+} elseif ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF"){
+  $date = date("Ymd");
+  $id_rekam_medis = $date . "001";
 }
-
 ?>

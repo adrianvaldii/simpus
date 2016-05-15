@@ -1,9 +1,15 @@
 <?php session_start();
   // error_reporting(0);
-  include_once 'koneksi/koneksi_lokal.php';
+  // oracle
   include_once 'koneksi/koneksi_pusat.php';
+  include_once 'koneksi/koneksi_lokal.php';
   include_once 'koneksi/koneksi_dokter.php';
   include_once 'koneksi/koneksi_apoteker.php';
+  // mysql
+  include_once 'koneksi/mysql_lokal.php';
+  include_once 'koneksi/mysql_pusat.php';
+  include_once 'koneksi/mysql_dokter.php';
+  include_once 'koneksi/mysql_apoteker.php';
 
   // timezone
   date_default_timezone_set('Asia/Jakarta');
@@ -27,6 +33,7 @@
     $daftar_pelayanan = $_POST['daftar_pelayanan'];
     $daftar_perawat = $_POST['daftar_perawat'];
 
+    $query = "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES ('$id_daftar', STR_TO_DATE('$tgl_daftar', '%Y-%m-%d'), '$id_pasien', '$daftar_pelayanan', '$daftar_perawat')";
     // query
     $query_lokal = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
     $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
@@ -71,6 +78,8 @@
         // commit ke server dokter
         $result_dokter = oci_execute($query_dokter);
         oci_commit($conn_dokter);
+
+        $mysqli_lokal->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis, Pusat, Apoteker, dan Dokter!";
 
