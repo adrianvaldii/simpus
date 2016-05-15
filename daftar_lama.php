@@ -33,193 +33,131 @@
     $daftar_pelayanan = $_POST['daftar_pelayanan'];
     $daftar_perawat = $_POST['daftar_perawat'];
 
-    $query = "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES ('$id_daftar', STR_TO_DATE('$tgl_daftar', '%Y-%m-%d'), '$id_pasien', '$daftar_pelayanan', '$daftar_perawat')";
     // query
-    $query_lokal = oci_parse($conn_lokal, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    $query_pusat = oci_parse($conn_pusat, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    $query_dokter = oci_parse($conn_dokter, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    $query_apoteker = oci_parse($conn_apoteker, "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES (:id_daftar, to_date(:tgl_daftar, 'YYYY-MM-DD'), :id_pasien, :id_pelayanan, :id_perawat)");
-    // binding data ke server resepsionis
-    oci_bind_by_name($query_lokal, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_lokal, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_lokal, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_lokal, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_lokal, ":id_perawat" , $daftar_perawat);
-    // binding data ke server pusat
-    oci_bind_by_name($query_pusat, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_pusat, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_pusat, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_pusat, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_pusat, ":id_perawat" , $daftar_perawat);
-    // binding data ke server dokter
-    oci_bind_by_name($query_dokter, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_dokter, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_dokter, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_dokter, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_dokter, ":id_perawat" , $daftar_perawat);
-    // binding data ke server apoteker
-    oci_bind_by_name($query_apoteker, ":id_daftar", $id_daftar);
-    oci_bind_by_name($query_apoteker, ":tgl_daftar", $tgl_daftar);
-    oci_bind_by_name($query_apoteker, ":id_pasien", $id_pasien);
-    oci_bind_by_name($query_apoteker, ":id_pelayanan", $daftar_pelayanan);
-    oci_bind_by_name($query_apoteker, ":id_perawat" , $daftar_perawat);
+    $query = "INSERT INTO rekam_medis (id_daftar, tgl_daftar, id_pasien, id_pelayanan, id_perawat) VALUES ('$id_daftar', STR_TO_DATE('$tgl_daftar', '%Y-%m-%d'), '$id_pasien', '$daftar_pelayanan', '$daftar_perawat')";
 
     // logika basis data terdistribusi
-    if ($status_lokal == "ON" && $status_pusat == "ON" && $status_apoteker == "ON" && $status_dokter == "ON") {
+    if ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
-        // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
-        // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
-
         $mysqli_lokal->query($query);
+        // commit ke server pusat
+        $mysqli_pusat->query($query);
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
+        // commit ke server dokter
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis, Pusat, Apoteker, dan Dokter!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_apoteker == "OFF" && $status_dokter == "OFF") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
+        $mysqli_lokal->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_apoteker == "OFF" && $status_dokter == "OFF") {
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF") {
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
+        $mysqli_pusat->query($query);
 
         $status = "Data berhasil ditambahkan pada server Pusat!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "OFF" && $status_apoteker == "ON" && $status_dokter == "OFF") {
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
 
         $status = "Data berhasil ditambahkan pada server Apoteker!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "OFF" && $status_apoteker == "OFF" && $status_dokter == "ON") {
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Dokter!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "ON" && $status_apoteker == "OFF" && $status_dokter == "OFF") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "OFF") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
+        $mysqli_lokal->query($query);
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
+        $mysqli_pusat->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis dan Pusat!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_apoteker == "ON" && $status_dokter == "OFF") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+        $mysqli_lokal->query($query);
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis dan Apoteker!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_apoteker == "OFF" && $status_dokter == "ON") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
+        $mysqli_lokal->query($query);
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis dan Dokter!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_apoteker == "ON" && $status_dokter == "OFF") {
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+        $mysqli_pusat->query($query);
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
 
         $status = "Data berhasil ditambahkan pada server Pusat dan Apoteker!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_apoteker == "OFF" && $status_dokter == "ON") {
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
+        $mysqli_pusat->query($query);
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Pusat dan Dokter!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "OFF" && $status_apoteker == "ON" && $status_dokter == "ON") {
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Apoteker dan Dokter!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "OFF" && $status_apoteker == "ON" && $status_dokter == "ON") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "OFF" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+        $mysqli_lokal->query($query);
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis, Apoteker, dan Dokter!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "ON" && $status_apoteker == "OFF" && $status_dokter == "ON") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "OFF" && $stat_mydokter == "ON") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
+        $mysqli_lokal->query($query);
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
+        $mysqli_pusat->query($query);
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis, Pusat, dan Dokter!";
 
-    } elseif ($status_lokal == "ON" && $status_pusat == "ON" && $status_apoteker == "ON" && $status_dokter == "OFF") {
+    } elseif ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "OFF") {
         // commit ke server lokal
-        $result_lokal = oci_execute($query_lokal);
-        oci_commit($conn_lokal);
+        $mysqli_lokal->query($query);
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+        $mysqli_pusat->query($query);
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
 
         $status = "Data berhasil ditambahkan pada server Resepsionis, Pusat, dan Apoteker!";
 
-    } elseif ($status_lokal == "OFF" && $status_pusat == "ON" && $status_apoteker == "ON" && $status_dokter == "ON") {
+    } elseif ($stat_mylokal == "OFF" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" && $stat_mydokter == "ON") {
         // commit ke server pusat
-        $result_pusat = oci_execute($query_pusat);
-        oci_commit($conn_pusat);
-        // commit ke server resepsionis
-        $result_apoteker = oci_execute($query_apoteker);
-        oci_commit($conn_apoteker);
+        $mysqli_pusat->query($query);
+        // commit ke server apoteker
+        $mysqli_apoteker->query($query);
         // commit ke server dokter
-        $result_dokter = oci_execute($query_dokter);
-        oci_commit($conn_dokter);
+        $mysqli_dokter->query($query);
 
         $status = "Data berhasil ditambahkan pada server Pusat, Apoteker, dan Dokter!";
 
@@ -275,6 +213,7 @@
           <div class="row">
             <div class="col-md-12">
               <?php
+                // menampilkan status
                 if (isset($_POST['submit'])) {
                   ?><div class="alert alert-info alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
