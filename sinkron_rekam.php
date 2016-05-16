@@ -37,7 +37,7 @@
 
   // resepsionis to pusat
   if (isset($_POST['submit_pusat'])) {
-    $result = $mysqli_lokal->query($query_pusat);
+    $result = $mysqli_lokal->query($query_resepsionis);
 
     if ($result) {
       $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
@@ -48,7 +48,7 @@
   }
   // pusat to resepsionis
   if (isset($_POST['submit_resepsionis'])) {
-    $result = $mysqli_lokal->query($query_resepsionis);
+    $result = $mysqli_pusat->query($query_pusat);
 
     if ($result) {
       $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
