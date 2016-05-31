@@ -20,7 +20,7 @@
     $stmt = $mysqli_pusat->query($query);
 
     while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
-      $mysqli_resepsionis->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      $mysqli_lokal->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
       VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
       '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
       id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
@@ -39,7 +39,7 @@
   // pusat to resepsionis
   if (isset($_POST['submit_resepsionis'])) {
     $query = "select * from rekam_medis";
-    $stmt = $mysqli_resepsionis->query($query);
+    $stmt = $mysqli_lokal->query($query);
 
     while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
       $mysqli_pusat->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
@@ -64,7 +64,7 @@
     $stmt = $mysqli_dokter->query($query);
 
     while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
-      $mysqli_resepsionis->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      $mysqli_lokal->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
       VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
       '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
       id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
@@ -86,7 +86,7 @@
     $stmt = $mysqli_apoteker->query($query);
 
     while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
-      $mysqli_resepsionis->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      $mysqli_lokal->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
       VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
       '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
       id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
