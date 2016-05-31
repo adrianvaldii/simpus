@@ -54,7 +54,7 @@ if ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" &
     $sekarang = date("Ymd");
 
     if ($hasil == $sekarang) {
-      $id_rekam_medis = $nilai_max + 1;
+      $id_rekam_medis = $cari_lokal[0] + 1;
     }else {
       $id_rekam_medis = $sekarang . "001";
     }
@@ -74,7 +74,7 @@ if ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" &
     $sekarang = date("Ymd");
 
     if ($hasil == $sekarang) {
-      $id_rekam_medis = $nilai_max + 1;
+      $id_rekam_medis = $cari_pusat[0] + 1;
     }else {
       $id_rekam_medis = $sekarang . "001";
     }
@@ -94,7 +94,7 @@ if ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" &
     $sekarang = date("Ymd");
 
     if ($hasil == $sekarang) {
-      $id_rekam_medis = $nilai_max + 1;
+      $id_rekam_medis = $cari_apoteker[0] + 1;
     }else {
       $id_rekam_medis = $sekarang . "001";
     }
@@ -114,7 +114,7 @@ if ($stat_mylokal == "ON" && $stat_mypusat == "ON" && $stat_myapoteker == "ON" &
     $sekarang = date("Ymd");
 
     if ($hasil == $sekarang) {
-      $id_rekam_medis = $nilai_max + 1;
+      $id_rekam_medis = $cari_dokter[0] + 1;
     }else {
       $id_rekam_medis = $sekarang . "001";
     }

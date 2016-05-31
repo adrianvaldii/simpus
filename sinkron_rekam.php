@@ -14,32 +14,22 @@
 
   $status = "";
 
-  // query
-  $query_pusat = "INSERT INTO rekam_medis SELECT * FROM skripsi_resepsionis.rekam_medis r ON DUPLICATE KEY UPDATE
-                  id_daftar = r.id_daftar, tgl_daftar = r.tgl_daftar, anamnesa = r.anamnesa, pemeriksaan = r.pemeriksaan,
-                  diagnosis = r.diagnosis, terapi = r.terapi, status = r.status, id_pelayanan = r.id_pelayanan,
-                  id_perawat = r.id_perawat, id_pasien = r.id_pasien, id_dokter = r.id_dokter, id_apoteker = r.id_apoteker, hasil_lab = r.hasil_lab";
-
-  $query_resepsionis = "INSERT INTO rekam_medis SELECT * FROM skripsi_pusat.rekam_medis p ON DUPLICATE KEY UPDATE
-                  id_daftar = p.id_daftar, tgl_daftar = p.tgl_daftar, anamnesa = p.anamnesa, pemeriksaan = p.pemeriksaan,
-                  diagnosis = p.diagnosis, terapi = p.terapi, status = p.status, id_pelayanan = p.id_pelayanan,
-                  id_perawat = p.id_perawat, id_pasien = p.id_pasien, id_dokter = p.id_dokter, id_apoteker = p.id_apoteker, hasil_lab = p.hasil_lab";
-
-  $query_dokter = "INSERT INTO rekam_medis SELECT * FROM skripsi_dokter.rekam_medis d ON DUPLICATE KEY UPDATE
-                  id_daftar = d.id_daftar, tgl_daftar = d.tgl_daftar, anamnesa = d.anamnesa, pemeriksaan = d.pemeriksaan,
-                  diagnosis = d.diagnosis, terapi = d.terapi, status = d.status, id_pelayanan = d.id_pelayanan,
-                  id_perawat = d.id_perawat, id_pasien = d.id_pasien, id_dokter = d.id_dokter, id_apoteker = d.id_apoteker, hasil_lab = d.hasil_lab";
-
-  $query_apoteker = "INSERT INTO rekam_medis SELECT * FROM skripsi_apoteker.rekam_medis a ON DUPLICATE KEY UPDATE
-                  id_daftar = a.id_daftar, tgl_daftar = a.tgl_daftar, anamnesa = a.anamnesa, pemeriksaan = a.pemeriksaan,
-                  diagnosis = a.diagnosis, terapi = a.terapi, status = a.status, id_pelayanan = a.id_pelayanan,
-                  id_perawat = a.id_perawat, id_pasien = a.id_pasien, id_dokter = a.id_dokter, id_apoteker = a.id_apoteker, hasil_lab = a.hasil_lab";
-
   // resepsionis to pusat
   if (isset($_POST['submit_pusat'])) {
-    $result = $mysqli_lokal->query($query_resepsionis);
+    $query = "select * from rekam_medis";
+    $stmt = $mysqli_pusat->query($query);
 
-    if ($result) {
+    while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
+      $mysqli_resepsionis->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
+      '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
+      id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
+      diagnosis = '$row[diagnosis]', terapi = '$row[terapi]', status = '$row[status]', id_pelayanan = '$row[id_pelayanan]',
+      id_perawat = '$row[id_perawat]', id_pasien = '$row[id_pasien]', id_dokter = '$row[id_dokter]', id_apoteker = '$row[id_apoteker]',
+      hasil_lab = '$row[hasil_lab]'");
+    }
+
+    if ($stmt) {
       $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
       $status = "Bad News! Data rekam medis gagal disinkronisasi.";
@@ -48,9 +38,20 @@
   }
   // pusat to resepsionis
   if (isset($_POST['submit_resepsionis'])) {
-    $result = $mysqli_pusat->query($query_pusat);
+    $query = "select * from rekam_medis";
+    $stmt = $mysqli_resepsionis->query($query);
 
-    if ($result) {
+    while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
+      $mysqli_pusat->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
+      '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
+      id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
+      diagnosis = '$row[diagnosis]', terapi = '$row[terapi]', status = '$row[status]', id_pelayanan = '$row[id_pelayanan]',
+      id_perawat = '$row[id_perawat]', id_pasien = '$row[id_pasien]', id_dokter = '$row[id_dokter]', id_apoteker = '$row[id_apoteker]',
+      hasil_lab = '$row[hasil_lab]'");
+    }
+
+    if ($stmt) {
       $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
       $status = "Bad News! Data rekam medis gagal disinkronisasi.";
@@ -59,9 +60,20 @@
   }
   // resepsionis to dokter
   if (isset($_POST['submit_dokter'])) {
-    $result = $mysqli_lokal->query($query_dokter);
+    $query = "select * from rekam_medis";
+    $stmt = $mysqli_dokter->query($query);
 
-    if ($result) {
+    while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
+      $mysqli_resepsionis->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
+      '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
+      id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
+      diagnosis = '$row[diagnosis]', terapi = '$row[terapi]', status = '$row[status]', id_pelayanan = '$row[id_pelayanan]',
+      id_perawat = '$row[id_perawat]', id_pasien = '$row[id_pasien]', id_dokter = '$row[id_dokter]', id_apoteker = '$row[id_apoteker]',
+      hasil_lab = '$row[hasil_lab]'");
+    }
+
+    if ($stmt) {
       $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
       $status = "Bad News! Data rekam medis gagal disinkronisasi.";
@@ -70,9 +82,20 @@
   }
   // resepsionis to apoteker
   if (isset($_POST['submit_apoteker'])) {
-    $result = $mysqli_lokal->query($query_apoteker);
+    $query = "select * from rekam_medis";
+    $stmt = $mysqli_apoteker->query($query);
 
-    if ($result) {
+    while ($row = $stmt->fetch_array(MYSQL_ASSOC)) {
+      $mysqli_resepsionis->query("INSERT INTO rekam_medis (id_daftar, tgl_daftar, anamnesa, pemeriksaan, diagnosis, terapi, status, id_pasien, id_pelayanan, id_dokter, id_perawat, id_apoteker, hasil_lab)
+      VALUES ('$row[id_daftar]','$row[tgl_daftar]','$row[anamnesa]','$row[pemeriksaan]','$row[diagnosis]','$row[terapi]',
+      '$row[status]','$row[id_pasien]','$row[id_pelayanan]','$row[id_dokter]','$row[id_perawat]','$row[id_apoteker]','$row[hasil_lab]') ON DUPLICATE KEY UPDATE
+      id_daftar = '$row[id_daftar]', tgl_daftar = '$row[tgl_daftar]', anamnesa = '$row[anamnesa]', pemeriksaan = '$row[pemeriksaan]',
+      diagnosis = '$row[diagnosis]', terapi = '$row[terapi]', status = '$row[status]', id_pelayanan = '$row[id_pelayanan]',
+      id_perawat = '$row[id_perawat]', id_pasien = '$row[id_pasien]', id_dokter = '$row[id_dokter]', id_apoteker = '$row[id_apoteker]',
+      hasil_lab = '$row[hasil_lab]'");
+    }
+
+    if ($stmt) {
       $status = "Good Job! Data rekam medis berhasil disinkronisasi.";
     } else {
       $status = "Bad News! Data rekam medis gagal disinkronisasi.";
