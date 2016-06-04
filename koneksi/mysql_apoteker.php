@@ -1,6 +1,6 @@
 <?php
   // error_reporting(0);
-  $host = "localhost";
+  $host = "192.168.1.6";
   $username = "apoteker";
   $password = "apoteker";
   $db = "skripsi_apoteker";

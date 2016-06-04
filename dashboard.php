@@ -10,10 +10,9 @@
   include_once 'koneksi/mysql_pusat.php';
   include_once 'koneksi/mysql_dokter.php';
   include_once 'koneksi/mysql_apoteker.php';
-
+  
   if(empty($_SESSION['user'])){
     header("Location: index.php?message=please+login");
-
     die("Redirecting to: index.php");
   }
 ?>
@@ -85,7 +84,6 @@
                   </thead>
                   <tbody>
                     <?php
-
                     ?>
                   </tbody>
                 </table>

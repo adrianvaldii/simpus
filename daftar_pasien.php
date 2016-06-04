@@ -71,7 +71,7 @@
 
       // oci_close($conn_pusat);
 
-      $status = "Data berhasil ditambahkan pada kedua server (Resepsionis & Dokter)";
+      $status = "Data berhasil ditambahkan pada kedua server (Resepsionis & pusat)";
     } elseif ($status_lokal == "ON" && $status_pusat == "OFF") {
       // input to local server
       $result_lokal = oci_execute($query);
@@ -79,7 +79,7 @@
 
       // oci_close($conn_lokal);
 
-      $status = "Data berhasil ditambahkan pada server resepsionis (Masalah pada server Dokter)";
+      $status = "Data berhasil ditambahkan pada server resepsionis (Masalah pada server pusat)";
     } elseif ($status_lokal == "OFF" && $status_pusat == "ON") {
       // input to main server
       $result_pusat = oci_execute($query_pusat);
@@ -87,7 +87,7 @@
 
       // oci_close($conn_pusat);
 
-      $status = "Data berhasil ditambahkan pada server Dokter (Masalah pada server Resepsionis)";
+      $status = "Data berhasil ditambahkan pada server pusat (Masalah pada server Resepsionis)";
     } else {
       $status = "Data gagal ditambahkan. Masalah pada kedua server.";
     }

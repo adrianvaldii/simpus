@@ -2,7 +2,7 @@
 
   $username = "pusat";
   $password = "pusat";
-  $database = "localhost/XE";
+  $database = "192.168.1.3/XE";
 
   $conn_pusat = oci_connect($username, $password, $database);
 

@@ -2,7 +2,7 @@
 
   $username = "apoteker";
   $password = "apoteker";
-  $database = "localhost/xe";
+  $database = "192.168.1.6/xe";
 
   $conn_apoteker = oci_connect($username, $password, $database);
 
